@@ -10,10 +10,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Runner bewusst gepinnt statt macos-latest: das Package braucht Swift 6, und
+# xcodegen erzeugt Projektformat 77, das erst Xcode 16 öffnet. macos-14 bringt
+# Xcode 15.4 und scheitert an beidem.
 jobs:
   paket:
     name: Package (FTMSKit, FTMSTransport)
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
@@ -28,7 +31,7 @@ jobs:
 
   app:
     name: iOS-App und UI-Tests
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
