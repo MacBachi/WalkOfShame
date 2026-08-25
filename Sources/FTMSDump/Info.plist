@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key>
+    <string>local.treadmill.ftms-dump</string>
+    <key>CFBundleName</key>
+    <string>ftms-dump</string>
+    <!-- Ohne diesen Schlüssel killt macOS den Prozess beim ersten
+         CBCentralManager-Zugriff (SIGABRT, keine Fehlermeldung). -->
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Liest die Trainingsdaten des Laufbands über den Bluetooth-Standard FTMS.</string>
+</dict>
+</plist>

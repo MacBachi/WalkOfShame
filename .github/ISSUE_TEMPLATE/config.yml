@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security or safety issue
+    url: https://github.com/MacBachi/WalkOfShame/security/advisories/new
+    about: Anything that lets a speed command bypass confirmation or range checking belongs here, not in a public issue.

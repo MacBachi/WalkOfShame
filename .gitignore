@@ -1,0 +1,26 @@
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Xcode
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# Das Xcode-Projekt wird aus App/project.yml erzeugt (xcodegen) und gehört
+# deshalb nicht ins Repo — sonst pflegt man zwei Wahrheiten.
+App/Treadmill.xcodeproj/
+
+# Eigene Geräte-Mitschnitte. Enthalten Seriennummer und System-ID des
+# jeweiligen Laufbands; die für Tests nötigen Auszüge stehen in
+# Tests/FTMSKitTests/EchteDumpsTests.swift.
+dumps/
+
+# Ablage der lokalen Arbeitsnotizen
+.scratch/
+
+# macOS
+.DS_Store

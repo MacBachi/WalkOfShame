@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  paket:
+    name: Package (FTMSKit, FTMSTransport)
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Swift-Version
+        run: swift --version
+
+      - name: Bauen
+        run: swift build --build-tests
+
+      - name: Testen
+        run: swift test
+
+  app:
+    name: iOS-App und UI-Tests
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: xcodegen installieren
+        run: brew install xcodegen
+
+      - name: Xcode-Projekt erzeugen
+        working-directory: App
+        run: xcodegen generate
+
+      # Die Runner-Images wechseln ihre Simulatoren; deshalb wird das Ziel zur
+      # Laufzeit gesucht statt fest verdrahtet.
+      - name: Simulator auswählen
+        id: simulator
+        run: |
+          UDID=$(xcrun simctl list devices available --json \
+            | jq -r '[.devices[][] | select(.name | startswith("iPhone"))] | .[0].udid')
+          if [ -z "$UDID" ] || [ "$UDID" = "null" ]; then
+            echo "Kein iPhone-Simulator verfügbar" >&2
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          xcrun simctl list devices available | grep "$UDID"
+
+      # UI-Tests hängen an Animationen und Timing; ein zweiter Versuch fängt
+      # Flackern ab, ohne echte Fehler zu verstecken.
+      - name: Testen
+        working-directory: App
+        run: |
+          xcodebuild test \
+            -project Treadmill.xcodeproj \
+            -scheme Treadmill \
+            -destination "id=${{ steps.simulator.outputs.udid }}" \
+            -retry-tests-on-failure -test-iterations 2 \
+            CODE_SIGNING_ALLOWED=NO

@@ -1,0 +1,57 @@
+name: My treadmill does not work
+description: Wrong, missing or absurd values with a device other than the one this was built for
+labels: [device]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        FTMS is a standard, but firmware is firmware. The raw hex is what makes
+        this fixable — decoded values only tell me what my parser thinks, the hex
+        tells me what your treadmill actually sent.
+
+  - type: input
+    id: geraet
+    attributes:
+      label: Treadmill
+      description: Manufacturer, model, firmware version — all three are in the debug panel
+      placeholder: LJJ-sports _SPORTS_HJL1.10, firmware 6.1.2
+    validations:
+      required: true
+
+  - type: textarea
+    id: verhalten
+    attributes:
+      label: What goes wrong
+      description: What does the app show, and what does the treadmill's own display show at the same moment?
+      placeholder: |
+        App: 12.7 km/h and 3276.7 % incline
+        Display: 4.5 km/h, no incline at all
+    validations:
+      required: true
+
+  - type: textarea
+    id: hex
+    attributes:
+      label: Raw log
+      description: |
+        Settings → Debug mode on → Inspect raw data → walk for a minute → Share log.
+        Paste it here, or attach the file.
+      render: text
+    validations:
+      required: true
+
+  - type: input
+    id: ios
+    attributes:
+      label: iPhone and iOS version
+      placeholder: iPhone 8, iOS 16.7.16
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: hinweise
+    attributes:
+      label: Before submitting
+      options:
+        - label: The log contains the treadmill's serial number and system ID if it includes a full GATT dump. I have removed anything I would rather not publish.
+          required: false

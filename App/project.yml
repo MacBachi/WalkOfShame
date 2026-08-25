@@ -1,0 +1,86 @@
+name: Treadmill
+options:
+  bundleIdPrefix: at.local
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+packages:
+  FTMSPaket:
+    path: ..
+
+targets:
+  Treadmill:
+    type: application
+    platform: iOS
+    sources:
+      - path: Treadmill
+        excludes: ["Info.plist"]
+    # Achtung: xcodegen *generiert* die Datei unter info.path und ueberschreibt
+    # eine handgeschriebene Info.plist. Alle Schluessel muessen deshalb hier
+    # stehen, nicht in der Datei.
+    info:
+      path: Treadmill/Info.plist
+      properties:
+        UIBackgroundModes:
+          # Damit der 0x2ACD-Strom bei gesperrtem Screen weiterlaeuft.
+          - bluetooth-central
+        NSBluetoothAlwaysUsageDescription: >-
+          Liest die Trainingsdaten deines Laufbands ueber den Bluetooth-Standard FTMS.
+        NSHealthUpdateUsageDescription: >-
+          Schreibt deine Laufband-Einheiten als Workout mit Distanz und Kalorien
+          nach Apple Health.
+        CFBundleDisplayName: Walk of Shame
+        UILaunchScreen: {}
+        # Explizit, nicht auf den iOS-Default verlassen: der Hauptbildschirm ist
+        # fuer beide Lagen gebaut und darf in keiner scrollen.
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: at.local.treadmill
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: Treadmill/Treadmill.entitlements
+        CODE_SIGN_STYLE: Automatic
+    dependencies:
+      - package: FTMSPaket
+        product: FTMSKit
+      - package: FTMSPaket
+        product: FTMSTransport
+    scheme:
+      testTargets:
+        - TreadmillTests
+        - TreadmillUITests
+
+  # Sprachlogik und Textkatalog.
+  TreadmillTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - TreadmillTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: at.local.treadmill.tests
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: Treadmill
+
+  # Prueft die Anforderung "Hauptbildschirm scrollt nie" in beiden Lagen.
+  TreadmillUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - TreadmillUITests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: at.local.treadmill.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: Treadmill
+    dependencies:
+      - target: Treadmill
